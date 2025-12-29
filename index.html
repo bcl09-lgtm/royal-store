@@ -459,41 +459,53 @@ window.onclick = function(event) {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script>
-// إعدادات الاتصال بـ bcl.dz
+<script>
+// 1. إعدادات الاتصال
 const supabaseUrl = 'https://ikewpivxeqhgcmdusgro.supabase.co';
 const supabaseKey = 'sb_publishable_Y2GIN3b5fhRacM0L5VJ1iw_hA5gtsuF';
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// وظيفة لجلب الفئات وعرضها في المتجر
-async function loadStoreData() {
-    // 1. جلب الفئات من الجدول الذي سننشئه
-    const { data: categories, error } = await supabase
-        .from('categories')
-        .select('*');
+// 2. الدالة الرئيسية لتشغيل المتجر
+async function initStore() {
+    try {
+        // جلب إعدادات القالب (الألوان والاسم)
+        const { data: settings, error: settingsError } = await supabase
+            .from('store_settings')
+            .select('*')
+            .single();
 
-    if (error) {
-        console.error('حدث خطأ أثناء جلب البيانات:', error);
-        return;
-    }
+        if (settings) {
+            // تطبيق اللون المختار من قاعدة البيانات على الموقع
+            document.documentElement.style.setProperty('--main-gold', settings.primary_color);
+            console.log("تم تطبيق إعدادات متجر: " + settings.store_name);
+        }
 
-    // 2. تحديث واجهة المستخدم (القالب)
-    const categoryContainer = document.getElementById('categories-list');
-    if (categoryContainer && categories) {
-        categoryContainer.innerHTML = ''; // تفريغ المحتوى القديم الثابت
-        categories.forEach(cat => {
-            categoryContainer.innerHTML += `
-                <button class="category-btn" onclick="filterByCategory('${cat.slug}')">
-                    ${cat.name}
-                </button>
-            `;
-        });
+        // جلب الفئات (الأقسام)
+        const { data: categories, error: catError } = await supabase
+            .from('categories')
+            .select('*');
+
+        const categoryMenu = document.getElementById('categoryMenu');
+        if (categoryMenu && categories) {
+            let menuHTML = `<div class="cat-item active" onclick="filterProducts('all', 'كل المنتجات')">الكل</div>`;
+            categories.forEach(cat => {
+                menuHTML += `
+                    <div class="cat-item" onclick="filterProducts('${cat.slug}', '${cat.name}')">
+                        ${cat.name}
+                    </div>`;
+            });
+            categoryMenu.innerHTML = menuHTML;
+        }
+
+    } catch (err) {
+        console.error("خطأ في تحميل المتجر:", err);
     }
 }
 
-// تشغيل الوظيفة عند تحميل الصفحة
-window.onload = loadStoreData;
+// تشغيل النظام عند فتح الصفحة
+window.addEventListener('DOMContentLoaded', initStore);
 </script>
+
 
 </body>
 </html>
