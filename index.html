@@ -245,22 +245,13 @@
         window.addEventListener("scroll", reveal);
         // تشغيلها مرة واحدة عند التحميل
         window.onload = reveal;
-            <div class="menu-trigger" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
-    </div>
+                    function toggleMenu() {
+            const drawer = document.getElementById('sideDrawer');
+            const overlay = document.getElementById('overlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
 
-    <div class="drawer-overlay" id="overlay" onclick="toggleMenu()"></div>
-
-    <nav class="side-drawer" id="sideDrawer">
-        <a href="#" class="drawer-link">من نحن</a>
-        <a href="#" class="drawer-link">سياسة الإسترجاع</a>
-        <a href="#" class="drawer-link">الشحن والتوصيل</a>
-        <a href="#" class="drawer-link">تواصل معنا</a>
-        <div class="language-switch">
-            <button class="lang-btn">العربية</button>
-            <button class="lang-btn">English</button>
-        </div>
-    </nav>
 
     </script>
 
