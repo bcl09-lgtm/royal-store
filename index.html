@@ -259,74 +259,86 @@
             </div>
     </div>
 </section>
+<script>
+    // 1. تحريك العناصر عند التمرير
+    function reveal() {
+        const reveals = document.querySelectorAll(".reveal");
+        reveals.forEach(r => {
+            const windowHeight = window.innerHeight;
+            const elementTop = r.getBoundingClientRect().top;
+            if (elementTop < windowHeight - 100) {
+                r.classList.add("active");
+            }
+        });
+    }
 
+    // 2. مخزن البيانات (تأكدنا من سلامته)
+    const storeData = {
+        'about': '<h2>من نحن</h2><p>نحن المتجر الملكي، نقدم أفخم المنتجات العالمية بجودة مضمونة منذ عام 2025...</p>',
+        'shipping': '<h2>الشحن والتوصيل</h2><p>نقوم بالشحن لجميع الولايات. التوصيل يستغرق من 2 إلى 5 أيام عمل.</p>',
+        'returns': '<h2>سياسة الإسترجاع</h2><p>يمكنكم استبدال أو استرجاع المنتج خلال 7 أيام من تاريخ الاستلام بشرط حالته الأصلية.</p>',
+        'contact': `
+            <h1>تواصل معنا</h1>
+            <p>نحن هنا للإجابة على استفساراتكم على مدار الساعة.</p>
+            <div style="margin-top: 30px;">
+                <div style="margin-bottom: 20px;">
+                    <strong style="color: var(--accent-gold);">📍 المقر الرئيسي:</strong><br>
+                    الجزائر العاصمة، حي النخبة
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong style="color: var(--accent-gold);">📞 الهاتف:</strong><br>
+                    <a href="tel:+213123456789" style="text-decoration: none; color: inherit;">012 34 56 78</a>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong style="color: var(--accent-gold);">✉️ البريد الإلكتروني:</strong><br>
+                    support@royal-store.com
+                </div>
+                <div style="margin-top: 40px;">
+                    <a href="https://wa.me/213123456789" style="display: block; background: #25D366; color: white; text-align: center; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: bold;">
+                        تحدث معنا عبر واتساب مباشرة
+                    </a>
+                </div>
+            </div>`
+    };
 
-    <script>
-        // كود بسيط لعمل تأثير الظهور عند التنزيل (Scroll Reveal)
-        function reveal() {
-            var reveals = document.querySelectorAll(".reveal");
-            reveals.forEach(r => {
-                var windowHeight = window.innerHeight;
-                var elementTop = r.getBoundingClientRect().top;
-                if (elementTop < windowHeight - 100) {
-                    r.classList.add("active");
-                }
-            });
+    // 3. دالة فتح وإغلاق القائمة (بإضافة فحص الأخطاء)
+    window.toggleMenu = function() {
+        const drawer = document.getElementById('sideDrawer');
+        const overlay = document.getElementById('overlay');
+        if (drawer && overlay) {
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('active');
         }
-        window.addEventListener("scroll", reveal);
-        // تشغيلها مرة واحدة عند التحميل
-        window.onload = reveal;
-                    // مخزن النصوص
-const storeData = {
-    'about': '<h2>من نحن</h2><p>نحن المتجر الملكي، نقدم أفخم المنتجات العالمية بجودة مضمونة منذ عام 2025...</p>',
-    'shipping': '<h2>الشحن والتوصيل</h2><p>نقوم بالشحن لجميع الولايات. التوصيل يستغرق من 2 إلى 5 أيام عمل.</p>',
-    'returns': '<h2>سياسة الإسترجاع</h2><p>يمكنكم استبدال أو استرجاع المنتج خلال 7 أيام من تاريخ الاستلام بشرط حالته الأصلية.</p>',
-   'contact': `
-        <h1>تواصل معنا</h1>
-        <p>نحن هنا للإجابة على استفساراتكم على مدار الساعة.</p>
-        <div style="margin-top: 30px;">
-            <div style="margin-bottom: 20px;">
-                <strong style="color: var(--accent-gold);">📍 المقر الرئيسي:</strong><br>
-                الجزائر العاصمة، حي النخبة
-            </div>
-            <div style="margin-bottom: 20px;">
-                <strong style="color: var(--accent-gold);">📞 الهاتف:</strong><br>
-                <a href="tel:+213123456789" style="text-decoration: none; color: inherit;">012 34 56 78</a>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <strong style="color: var(--accent-gold);">✉️ البريد الإلكتروني:</strong><br>
-                support@royal-store.com
-            </div>
-            <div style="margin-top: 40px;">
-                <a href="https://wa.me/213123456789" style="display: block; background: #25D366; color: white; text-align: center; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: bold;">
-                    تحدث معنا عبر واتساب مباشرة
-                </a>
-            </div>
-        </div>`
-};
+    }
 
-function toggleMenu() {
-    document.getElementById('sideDrawer').classList.toggle('open');
-    document.getElementById('overlay').classList.toggle('active');
-}
+    // 4. دالة فتح المعلومات
+    window.showInfo = function(type) {
+        const section = document.getElementById('info-section');
+        const body = document.getElementById('info-body');
+        
+        if (section && body) {
+            body.innerHTML = storeData[type] || '<h2>قريباً</h2><p>سيتم إضافة المحتوى قريباً...</p>';
+            section.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // منع التحريك عند فتح النافذة
+            toggleMenu(); 
+        }
+    }
 
-// دالة فتح المعلومات
-function showInfo(type) {
-    const section = document.getElementById('info-section');
-    const body = document.getElementById('info-body');
+    // 5. دالة الإغلاق
+    window.closeInfo = function() {
+        const section = document.getElementById('info-section');
+        if (section) {
+            section.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // تشغيل الدوال عند التحميل
+    window.addEventListener("scroll", reveal);
+    window.addEventListener("load", reveal);
+</script>
+
+
     
-    body.innerHTML = storeData[type] || '<h2>قريباً</h2><p>سيتم إضافة المحتوى قريباً...</p>';
-    section.style.display = 'block';
-    toggleMenu(); // غلق القائمة بعد الاختيار
-}
-
-function closeInfo() {
-    document.getElementById('info-section').style.display = 'none';
-}
-
-
-
-    </script>
-
 </body>
 </html>
