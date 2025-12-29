@@ -210,27 +210,9 @@
             <a href="javascript:void(0)" onclick="showInfo('about')" class="drawer-link">من نحن</a>
     <a href="javascript:void(0)" onclick="showInfo('returns')" class="drawer-link">سياسة الإسترجاع</a>
     <a href="javascript:void(0)" onclick="showInfo('shipping')" class="drawer-link">الشحن والتوصيل</a>
-        <h1>تواصل معنا</h1>
-        <p>نحن هنا للإجابة على استفساراتكم على مدار الساعة.</p>
-        <div style="margin-top: 30px;">
-            <div style="margin-bottom: 20px;">
-                <strong style="color: var(--accent-gold);">📍 المقر الرئيسي:</strong><br>
-             ولاية قالمة
-            </div>
-            <div style="margin-bottom: 20px;">
-                <strong style="color: var(--accent-gold);">📞 الهاتف:</strong><br>
-                <a href="tel:+213123456789" style="text-decoration: none; color: inherit;">012 34 56 78</a>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <strong style="color: var(--accent-gold);">✉️ البريد الإلكتروني:</strong><br>
-                support@royal-store.com
-            </div>
-            <div style="margin-top: 40px;">
-                <a href="https://wa.me/213123456789" style="display: block; background: #25D366; color: white; text-align: center; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: bold;">
-                    تحدث معنا عبر واتساب مباشرة
-                </a>
-            </div>
-        </div>
+        <a href="javascript:void(0)" onclick="showInfo('contact')" class="drawer-link">تواصل معنا</a>
+
+        
         <div class="language-switch">
             <button class="lang-btn">العربية</button>
             <button class="lang-btn">English</button>
@@ -299,6 +281,28 @@ const storeData = {
     'about': '<h2>من نحن</h2><p>نحن المتجر الملكي، نقدم أفخم المنتجات العالمية بجودة مضمونة منذ عام 2025...</p>',
     'shipping': '<h2>الشحن والتوصيل</h2><p>نقوم بالشحن لجميع الولايات. التوصيل يستغرق من 2 إلى 5 أيام عمل.</p>',
     'returns': '<h2>سياسة الإسترجاع</h2><p>يمكنكم استبدال أو استرجاع المنتج خلال 7 أيام من تاريخ الاستلام بشرط حالته الأصلية.</p>'
+   ' contact': `
+        <h1>تواصل معنا</h1>
+        <p>نحن هنا للإجابة على استفساراتكم على مدار الساعة.</p>
+        <div style="margin-top: 30px;">
+            <div style="margin-bottom: 20px;">
+                <strong style="color: var(--accent-gold);">📍 المقر الرئيسي:</strong><br>
+                الجزائر العاصمة، حي النخبة
+            </div>
+            <div style="margin-bottom: 20px;">
+                <strong style="color: var(--accent-gold);">📞 الهاتف:</strong><br>
+                <a href="tel:+213123456789" style="text-decoration: none; color: inherit;">012 34 56 78</a>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <strong style="color: var(--accent-gold);">✉️ البريد الإلكتروني:</strong><br>
+                support@royal-store.com
+            </div>
+            <div style="margin-top: 40px;">
+                <a href="https://wa.me/213123456789" style="display: block; background: #25D366; color: white; text-align: center; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: bold;">
+                    تحدث معنا عبر واتساب مباشرة
+                </a>
+            </div>
+        </div>
 };
 
 function toggleMenu() {
