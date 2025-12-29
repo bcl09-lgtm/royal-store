@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المتجر الملكي | التجربة الكاملة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #000;
+            --accent-gold: #d4af37;
+            --soft-white: #fafafa;
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            background-color: var(--soft-white);
+            color: var(--primary-color);
+            overflow-x: hidden;
+        }
+
+        /* 1. الهيدر الشفاف التفاعلي */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 25px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            mix-blend-mode: difference; /* ذكاء اصطناعي: يتغير لون النص حسب الخلفية! */
+            color: white;
+        }
+
+        /* 2. قسم البانر العملاق (Full Screen Hero) */
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+            background-attachment: fixed; /* تأثير Parallax */
+            position: relative;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .hero-title {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title h1 {
+            font-size: clamp(3rem, 10vw, 6rem); /* خط مرن يكبر ويصغر حسب الشاشة */
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        /* 3. شبكة عرض المنتجات الفاخرة */
+        .catalog {
+            padding: 100px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+        }
+
+        .item-card {
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            background: #fff;
+            transition: var(--transition);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .item-card:hover .item-image {
+            transform: scale(1.1); /* تكبير الصورة بهدوء عند اللمس */
+        }
+
+        .item-details {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .item-card:hover .item-details {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 4. زر الشراء الفاخر */
+        .shop-now {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: white;
+            color: black;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+        }
+
+        /* أنيميشن الظهور عند التمرير */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div style="font-size: 24px; font-weight: 900;">ROYAL.</div>
+        <div style="font-size: 18px;">🛒</div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-title">
+            <h1 class="reveal" id="mainTitle">الأناقة المطلقة</h1>
+            <p class="reveal" style="font-weight: 200; font-size: 1.5rem;">حصرياً لعام 2025</p>
+        </div>
+    </section>
+
+    <section class="catalog">
+        <div class="item-card reveal">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80" class="item-image" alt="Sneaker">
+            <div class="item-details">
+                <h2>حذاء رياضى برو</h2>
+                <p>خفة وزن لا تضاهى مع راحة تدوم طويلاً.</p>
+                <a href="#" class="shop-now">اكتشف المزيد</a>
+            </div>
+        </div>
+
+        <div class="item-card reveal">
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80" class="item-image" alt="Watch">
+            <div class="item-details">
+                <h2>ساعة النخبة</h2>
+                <p>دقة متناهية وتصميم يعكس هويتك.</p>
+                <a href="#" class="shop-now">اكتشف المزيد</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // كود بسيط لعمل تأثير الظهور عند التنزيل (Scroll Reveal)
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            reveals.forEach(r => {
+                var windowHeight = window.innerHeight;
+                var elementTop = r.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    r.classList.add("active");
+                }
+            });
+        }
+        window.addEventListener("scroll", reveal);
+        // تشغيلها مرة واحدة عند التحميل
+        window.onload = reveal;
+    </script>
+
+</body>
+</html>
