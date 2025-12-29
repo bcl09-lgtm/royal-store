@@ -175,6 +175,27 @@
             z-index: 1150; display: none;
         }
         .drawer-overlay.active { display: block; }
+        
+.info-page {
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 2000;
+    padding: 40px 5%;
+    overflow-y: auto;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.info-content { max-width: 800px; margin: 0 auto; text-align: right; }
+.close-btn { 
+    background: #f0f0f2; border: none; padding: 10px 20px; 
+    border-radius: 10px; cursor: pointer; margin-bottom: 30px; 
+}
 
     </style>
 </head>
@@ -229,6 +250,14 @@
             </div>
         </div>
     </section>
+    <section id="info-section" class="info-page" style="display: none;">
+    <div class="info-content">
+        <button onclick="closeInfo()" class="close-btn">✕ إغلاق</button>
+        <div id="info-body">
+            </div>
+    </div>
+</section>
+
 
     <script>
         // كود بسيط لعمل تأثير الظهور عند التنزيل (Scroll Reveal)
@@ -245,12 +274,32 @@
         window.addEventListener("scroll", reveal);
         // تشغيلها مرة واحدة عند التحميل
         window.onload = reveal;
-                    function toggleMenu() {
-            const drawer = document.getElementById('sideDrawer');
-            const overlay = document.getElementById('overlay');
-            drawer.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
+                    // مخزن النصوص
+const storeData = {
+    'about': '<h2>من نحن</h2><p>نحن المتجر الملكي، نقدم أفخم المنتجات العالمية بجودة مضمونة منذ عام 2025...</p>',
+    'shipping': '<h2>الشحن والتوصيل</h2><p>نقوم بالشحن لجميع الولايات. التوصيل يستغرق من 2 إلى 5 أيام عمل.</p>',
+    'returns': '<h2>سياسة الإسترجاع</h2><p>يمكنكم استبدال أو استرجاع المنتج خلال 7 أيام من تاريخ الاستلام بشرط حالته الأصلية.</p>'
+};
+
+function toggleMenu() {
+    document.getElementById('sideDrawer').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('active');
+}
+
+// دالة فتح المعلومات
+function showInfo(type) {
+    const section = document.getElementById('info-section');
+    const body = document.getElementById('info-body');
+    
+    body.innerHTML = storeData[type] || '<h2>قريباً</h2><p>سيتم إضافة المحتوى قريباً...</p>';
+    section.style.display = 'block';
+    toggleMenu(); // غلق القائمة بعد الاختيار
+}
+
+function closeInfo() {
+    document.getElementById('info-section').style.display = 'none';
+}
+
 
 
     </script>
