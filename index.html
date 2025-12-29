@@ -455,8 +455,45 @@ window.onclick = function(event) {
 }
 
 </script>
-
-
     
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+// إعدادات الاتصال بـ bcl.dz
+const supabaseUrl = 'https://ikewpivxeqhgcmdusgro.supabase.co';
+const supabaseKey = 'sb_publishable_Y2GIN3b5fhRacM0L5VJ1iw_hA5gtsuF';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+// وظيفة لجلب الفئات وعرضها في المتجر
+async function loadStoreData() {
+    // 1. جلب الفئات من الجدول الذي سننشئه
+    const { data: categories, error } = await supabase
+        .from('categories')
+        .select('*');
+
+    if (error) {
+        console.error('حدث خطأ أثناء جلب البيانات:', error);
+        return;
+    }
+
+    // 2. تحديث واجهة المستخدم (القالب)
+    const categoryContainer = document.getElementById('categories-list');
+    if (categoryContainer && categories) {
+        categoryContainer.innerHTML = ''; // تفريغ المحتوى القديم الثابت
+        categories.forEach(cat => {
+            categoryContainer.innerHTML += `
+                <button class="category-btn" onclick="filterByCategory('${cat.slug}')">
+                    ${cat.name}
+                </button>
+            `;
+        });
+    }
+}
+
+// تشغيل الوظيفة عند تحميل الصفحة
+window.onload = loadStoreData;
+</script>
+
 </body>
 </html>
