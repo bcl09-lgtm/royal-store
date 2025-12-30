@@ -3,509 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المتجر الملكي | التجربة الكاملة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;400;700;900&display=swap" rel="stylesheet">
-    
+    <title>BCL Core | النظام المتكامل</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #000;
-            --accent-gold: #d4af37;
-            --soft-white: #fafafa;
-            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            --s-bg: #f6f6f7; --s-text: #1a1c1d; --s-accent: #008060;
+            --s-sidebar: #1a1c1d; --s-white: #ffffff; --s-border: #d2d5d8;
+            --danger: #d72c0d;
         }
 
-        body {
-            font-family: 'Cairo', sans-serif;
-            margin: 0;
-            background-color: var(--soft-white);
-            color: var(--primary-color);
-            overflow-x: hidden;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--s-bg); color: var(--s-text); height: 100vh; overflow: hidden; }
+
+        /* --- بوابة الأمان --- */
+        #auth_gate {
+            position: fixed; inset: 0; background: #000; z-index: 100000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-card {
+            background: #111; padding: 50px; border-radius: 20px; border: 1px solid #222;
+            text-align: center; width: 400px;
+        }
+        .login-card input {
+            width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #333;
+            background: #000; color: white; font-size: 20px; text-align: center; margin-bottom: 20px;
+        }
+        .login-card button {
+            width: 100%; padding: 15px; background: var(--s-accent); color: white;
+            border: none; border-radius: 10px; font-weight: 900; cursor: pointer;
         }
 
-        /* 1. الهيدر الشفاف التفاعلي */
-        nav {
-            position: fixed;
-            top: 0; width: 100%;
-            padding: 25px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            mix-blend-mode: difference; /* ذكاء اصطناعي: يتغير لون النص حسب الخلفية! */
-            color: white;
-        }
+        /* --- الهيكل الرئيسي --- */
+        #bcl_system { display: none; height: 100vh; }
+        .app-layout { display: flex; height: 100vh; }
 
-        /* 2. قسم البانر العملاق (Full Screen Hero) */
-        .hero-section {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
-            background-attachment: fixed; /* تأثير Parallax */
-            position: relative;
+        aside {
+            width: 260px; background: var(--s-sidebar); color: #ccc;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden;
+            display: flex; flex-direction: column; white-space: nowrap;
         }
+        aside.collapsed { width: 0; padding: 0; }
 
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.3);
-        }
-
-        .hero-title {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            color: white;
-        }
-
-        .hero-title h1 {
-            font-size: clamp(3rem, 10vw, 6rem); /* خط مرن يكبر ويصغر حسب الشاشة */
-            font-weight: 900;
-            margin: 0;
-            letter-spacing: -2px;
-            line-height: 1;
-        }
-
-        /* 3. شبكة عرض المنتجات الفاخرة */
-        .catalog {
-            padding: 100px 5%;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 50px;
-        }
-
-        .item-card {
-            position: relative;
-            border-radius: 30px;
-            overflow: hidden;
-            background: #fff;
-            transition: var(--transition);
-        }
-
-        .item-image {
-            width: 100%;
-            height: 450px;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .item-card:hover .item-image {
-            transform: scale(1.1); /* تكبير الصورة بهدوء عند اللمس */
-        }
-
-        .item-details {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            padding: 30px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            color: white;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .item-card:hover .item-details {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* 4. زر الشراء الفاخر */
-        .shop-now {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 15px 40px;
-            background: white;
-            color: black;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 12px;
-        }
-
-        /* أنيميشن الظهور عند التمرير */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 1s ease-out;
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-                /* 5. تنسيق القائمة الجانبية */
-        .menu-trigger {
-            position: fixed; top: 25px; left: 5%;
-            z-index: 1100; cursor: pointer;
-            display: flex; flex-direction: column; gap: 6px;
-            mix-blend-mode: difference;
-        }
-        .menu-trigger span {
-            display: block; width: 30px; height: 2px;
-            background: white; transition: var(--transition);
-        }
-        .side-drawer {
-            position: fixed; top: 0; left: -300px;
-            width: 300px; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(15px);
-            z-index: 1200; transition: var(--transition);
-            padding: 100px 40px; box-sizing: border-box;
-            display: flex; flex-direction: column; gap: 25px;
-        }
-        .side-drawer.open { left: 0; }
-        .drawer-link {
-            color: white; text-decoration: none; font-size: 1.2rem;
-            transition: 0.3s; display: block; text-align: right;
-        }
-        .drawer-link:hover { color: var(--accent-gold); padding-right: 10px; }
-        .language-switch {
-            margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px; display: flex; gap: 10px;
-        }
-        .lang-btn {
-            background: none; border: 1px solid white; color: white;
-            padding: 5px 15px; border-radius: 20px; cursor: pointer;
-        }
-        .drawer-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-            z-index: 1150; display: none;
-        }
-        .drawer-overlay.active { display: block; }
+        .aside-header { color: white; font-weight: 900; font-size: 22px; padding: 30px 20px; cursor: pointer; }
+        .nav-group { flex: 1; display: none; padding: 0 10px; }
+        .nav-group.visible { display: block; }
         
-.info-page {
-    position: fixed;
-    inset: 0;
-    background: white;
-    z-index: 2000;
-    padding: 40px 5%;
-    overflow-y: auto;
-    animation: slideUp 0.4s ease;
-}
+        .nav-link {
+            padding: 12px 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; margin-bottom: 5px;
+        }
+        .nav-link:hover { background: rgba(255,255,255,0.1); color: white; }
 
-@keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-}
+        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        header {
+            height: 60px; background: white; border-bottom: 1px solid var(--s-border);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+        }
 
-.info-content { max-width: 800px; margin: 0 auto; text-align: right; }
-.close-btn { 
-    background: #f0f0f2; border: none; padding: 10px 20px; 
-    border-radius: 10px; cursor: pointer; margin-bottom: 30px; 
-}
-     /* تنسيق قسم الفئات */
-.category-section {
-    padding: 20px 5%;
-    position: relative;
-    z-index: 800; /* ليمر تحت الهيدر الذي يحمل 1000 */
-}
-
-.category-dropdown {
-    width: 100%;
-    max-width: 400px; /* عرض مناسب للموبايل */
-    margin: 0 auto;
-}
-
-.category-main-btn {
-    width: 100%;
-    padding: 15px 25px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: 'Cairo', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.3s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.category-menu {
-    display: none; /* مخفي في البداية */
-    flex-direction: column;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    margin-top: 8px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    position: absolute;
-    width: 90%; /* ليأخذ عرض الحاوية */
-}
-
-.cat-item {
-    padding: 15px 20px;
-    border: none;
-    background: none;
-    text-align: right;
-    font-family: 'Cairo', sans-serif;
-    border-bottom: 1px solid #f5f5f5;
-    cursor: pointer;
-    width: 100%;
-}
-
-.cat-item:hover {
-    background: #f9f9f9;
-    color: var(--accent-gold);
-}
-
-.cat-item.active {
-    color: var(--accent-gold);
-    font-weight: 900;
-}
-   
-
+        .scroll-area { flex: 1; overflow-y: auto; padding: 30px; }
+        .data-card { background: white; border: 1px solid var(--s-border); border-radius: 12px; padding: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: right; font-size: 12px; color: #666; padding: 10px; border-bottom: 2px solid var(--s-bg); }
+        td { padding: 15px 10px; border-bottom: 1px solid var(--s-bg); font-size: 14px; }
     </style>
 </head>
 <body>
-       <div class="menu-trigger" onclick="toggleMenu()">
-        <span></span><span></span><span></span>
-    </div>
 
-    <div class="drawer-overlay" id="overlay" onclick="toggleMenu()"></div>
-
-    <nav class="side-drawer" id="sideDrawer">
-            <a href="javascript:void(0)" onclick="showInfo('about')" class="drawer-link">من نحن</a>
-    <a href="javascript:void(0)" onclick="showInfo('returns')" class="drawer-link">سياسة الإسترجاع</a>
-    <a href="javascript:void(0)" onclick="showInfo('shipping')" class="drawer-link">الشحن والتوصيل</a>
-        <a href="javascript:void(0)" onclick="showInfo('contact')" class="drawer-link">تواصل معنا</a>
-
-        
-        <div class="language-switch">
-            <button class="lang-btn">العربية</button>
-            <button class="lang-btn">English</button>
-        </div>
-    </nav>
- 
-
-    <nav>
-        <div style="font-size: 24px; font-weight: 900;">ROYAL.</div>
-        <div style="font-size: 18px;">🛒</div>
-    </nav>
-
-    <section class="hero-section">
-        <div class="hero-overlay"></div>
-        <div class="hero-title">
-            <h1 class="reveal" id="mainTitle">الأناقة المطلقة</h1>
-            <p class="reveal" style="font-weight: 200; font-size: 1.5rem;">حصرياً لعام 2025</p>
-        </div>
-    </section>
-    <div class="category-section reveal">
-    <div class="category-dropdown">
-        <button class="category-main-btn" onclick="toggleCategoryMenu()">
-            <span id="currentCategoryText">تسوق حسب الفئة</span>
-            <span class="arrow-icon">▼</span>
-        </button>
-        
-        <div id="categoryMenu" class="category-menu">
-            <button class="cat-item active" onclick="filterProducts('all', 'الكل')">الكل</button>
+    <div id="auth_gate">
+        <div class="login-card" id="gate_box">
+            <h1 style="color:var(--s-accent); margin-bottom:20px;">BCL MASTER</h1>
+            <input type="password" id="passCode" placeholder="كود الدخول السري">
+            <button onclick="login()">دخول للنظام</button>
+            <p id="errorMsg" style="color:red; margin-top:15px; font-size:12px; font-weight:700;"></p>
         </div>
     </div>
-</div>
 
+    <div id="bcl_system">
+        <div class="app-layout">
+            <aside id="mainSidebar">
+                <div class="aside-header" onclick="toggleSubMenu()">BCL COMMAND ▾</div>
+                
+                <div id="linksContainer" class="nav-group">
+                    <div class="nav-link" onclick="fetchTemplates()">📡 رادار القوالب (Live)</div>
+                    <div class="nav-link">🏪 المتاجر العالمية</div>
+                    <div class="nav-link">💎 العضويات</div>
+                    <div class="nav-link">🔗 API Settings</div>
+                    <div class="nav-link">📂 Logs</div>
+                </div>
 
-    <section class="catalog">
-        <div class="item-card reveal">
-            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80" class="item-image" alt="Sneaker">
-            <div class="item-details">
-                <h2>حذاء رياضى برو</h2>
-                <p>خفة وزن لا تضاهى مع راحة تدوم طويلاً.</p>
-                <a href="#" class="shop-now">اكتشف المزيد</a>
-            </div>
+                <div class="nav-link" style="margin-top:auto; color:var(--danger); padding:20px;" onclick="location.reload()">🔒 خروج آمن</div>
+            </aside>
+
+            <main>
+                <header>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <button onclick="toggleSidebar()" style="background:none; border:none; font-size:20px; cursor:pointer;">☰</button>
+                        <span id="db_status" style="font-size:12px; font-weight:bold; color:orange;">Connecting...</span>
+                    </div>
+                    <div id="liveTime" style="font-weight:bold;">00:00:00</div>
+                </header>
+
+                <div class="scroll-area">
+                    <div id="view_title" style="margin-bottom:20px;">
+                        <h2 style="font-weight:900;">مرحباً أيها القائد</h2>
+                        <p style="color:#666;">جميع الأنظمة متصلة بـ Supabase بنجاح.</p>
+                    </div>
+
+                    <div id="mainContent" class="data-card">
+                        <p>بانتظار اختيار الأوامر من القائمة الجانبية...</p>
+                    </div>
+                </div>
+            </main>
         </div>
-
-        <div class="item-card reveal">
-            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80" class="item-image" alt="Watch">
-            <div class="item-details">
-                <h2>ساعة النخبة</h2>
-                <p>دقة متناهية وتصميم يعكس هويتك.</p>
-                <a href="#" class="shop-now">اكتشف المزيد</a>
-            </div>
-        </div>
-    </section>
-    <section id="info-section" class="info-page" style="display: none;">
-    <div class="info-content">
-        <button onclick="closeInfo()" class="close-btn">✕ إغلاق</button>
-        <div id="info-body">
-            </div>
     </div>
-</section>
-<script>
-    // 1. تحريك العناصر عند التمرير
-    function reveal() {
-        const reveals = document.querySelectorAll(".reveal");
-        reveals.forEach(r => {
-            const windowHeight = window.innerHeight;
-            const elementTop = r.getBoundingClientRect().top;
-            if (elementTop < windowHeight - 100) {
-                r.classList.add("active");
+
+    <script>
+        // --- إعدادات Supabase الخاصة بك ---
+        const SB_URL = "https://ikewpivxeqhgcmdusgro.supabase.co";
+        const SB_KEY = "sb_publishable_Y2GIN3b5fhRacM0L5VJ1iw_hA5gtsuF";
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+
+        let tries = 5;
+
+        // نظام الدخول والحظر
+        function login() {
+            if(localStorage.getItem('sys_banned')) return;
+            const code = document.getElementById('passCode').value;
+            if(code === "BCL-2025") {
+                document.getElementById('auth_gate').style.display = 'none';
+                document.getElementById('bcl_system').style.display = 'block';
+                checkDB();
+            } else {
+                tries--;
+                document.getElementById('errorMsg').innerText = `خطأ! متبقي ${tries} محاولات`;
+                if(tries <= 0) {
+                    localStorage.setItem('sys_banned', 'true');
+                    document.getElementById('gate_box').innerHTML = "<h2 style='color:red'>BANNED</h2>";
+                }
             }
-        });
-    }
-
-    // 2. مخزن البيانات (تأكدنا من سلامته)
-    const storeData = {
-        'about': '<h2>من نحن</h2><p>نحن المتجر الملكي، نقدم أفخم المنتجات العالمية بجودة مضمونة منذ عام 2025...</p>',
-        'shipping': '<h2>الشحن والتوصيل</h2><p>نقوم بالشحن لجميع الولايات. التوصيل يستغرق من 2 إلى 5 أيام عمل.</p>',
-        'returns': '<h2>سياسة الإسترجاع</h2><p>يمكنكم استبدال أو استرجاع المنتج خلال 7 أيام من تاريخ الاستلام بشرط حالته الأصلية.</p>',
-        'contact': `
-            <h1>تواصل معنا</h1>
-            <p>نحن هنا للإجابة على استفساراتكم على مدار الساعة.</p>
-            <div style="margin-top: 30px;">
-                <div style="margin-bottom: 20px;">
-                    <strong style="color: var(--accent-gold);">📍 المقر الرئيسي:</strong><br>
-                    الجزائر العاصمة، حي النخبة
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong style="color: var(--accent-gold);">📞 الهاتف:</strong><br>
-                    <a href="tel:+213123456789" style="text-decoration: none; color: inherit;">012 34 56 78</a>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong style="color: var(--accent-gold);">✉️ البريد الإلكتروني:</strong><br>
-                    support@royal-store.com
-                </div>
-                <div style="margin-top: 40px;">
-                    <a href="https://wa.me/213123456789" style="display: block; background: #25D366; color: white; text-align: center; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: bold;">
-                        تحدث معنا عبر واتساب مباشرة
-                    </a>
-                </div>
-            </div>`
-    };
-
-    // 3. دالة فتح وإغلاق القائمة (بإضافة فحص الأخطاء)
-    window.toggleMenu = function() {
-        const drawer = document.getElementById('sideDrawer');
-        const overlay = document.getElementById('overlay');
-        if (drawer && overlay) {
-            drawer.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-    }
-
-    // 4. دالة فتح المعلومات
-    window.showInfo = function(type) {
-        const section = document.getElementById('info-section');
-        const body = document.getElementById('info-body');
-        
-        if (section && body) {
-            body.innerHTML = storeData[type] || '<h2>قريباً</h2><p>سيتم إضافة المحتوى قريباً...</p>';
-            section.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // منع التحريك عند فتح النافذة
-            toggleMenu(); 
-        }
-    }
-
-    // 5. دالة الإغلاق
-    window.closeInfo = function() {
-        const section = document.getElementById('info-section');
-        if (section) {
-            section.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    }
-
-    // تشغيل الدوال عند التحميل
-    window.addEventListener("scroll", reveal);
-    window.addEventListener("load", reveal);
-    // دالة فتح وإغلاق القائمة
-window.toggleCategoryMenu = function() {
-    const menu = document.getElementById('categoryMenu');
-    if (menu.style.display === "flex") {
-        menu.style.display = "none";
-    } else {
-        menu.style.display = "flex";
-    }
-}
-
-// دالة الفلترة (جاهزة للربط مع لوحة التحكم)
-window.filterProducts = function(categoryId, categoryName) {
-    // تحديث نص الزر الرئيسي
-    document.getElementById('currentCategoryText').innerText = categoryName;
-
-    // تحديث حالة الأزرار (Active)
-    const items = document.querySelectorAll('.cat-item');
-    items.forEach(item => item.classList.remove('active'));
-    if(event) event.currentTarget.classList.add('active');
-
-    // إخفاء وإظهار المنتجات
-    const products = document.querySelectorAll('.item-card');
-    products.forEach(product => {
-        if (categoryId === 'all' || product.classList.contains(categoryId)) {
-            product.style.display = "block";
-        } else {
-            product.style.display = "none";
-        }
-    });
-
-    // إغلاق القائمة بعد الاختيار
-    document.getElementById('categoryMenu').style.display = "none";
-}
-
-// إغلاق القائمة إذا ضغط المستخدم خارجها
-window.onclick = function(event) {
-    if (!event.target.matches('.category-main-btn') && !event.target.closest('.category-main-btn')) {
-        const menu = document.getElementById('categoryMenu');
-        if (menu) menu.style.display = "none";
-    }
-}
-
-</script>
-    
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-// 1. إعدادات الاتصال
-const supabaseUrl = 'https://ikewpivxeqhgcmdusgro.supabase.co';
-const supabaseKey = 'sb_publishable_Y2GIN3b5fhRacM0L5VJ1iw_hA5gtsuF';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-// 2. الدالة الرئيسية لتشغيل المتجر
-async function initStore() {
-    try {
-        // جلب إعدادات القالب (الألوان والاسم)
-        const { data: settings, error: settingsError } = await supabase
-            .from('store_settings')
-            .select('*')
-            .single();
-
-        if (settings) {
-            // تطبيق اللون المختار من قاعدة البيانات على الموقع
-            document.documentElement.style.setProperty('--main-gold', settings.primary_color);
-            console.log("تم تطبيق إعدادات متجر: " + settings.store_name);
         }
 
-        // جلب الفئات (الأقسام)
-        const { data: categories, error: catError } = await supabase
-            .from('categories')
-            .select('*');
-
-        const categoryMenu = document.getElementById('categoryMenu');
-        if (categoryMenu && categories) {
-            let menuHTML = `<div class="cat-item active" onclick="filterProducts('all', 'كل المنتجات')">الكل</div>`;
-            categories.forEach(cat => {
-                menuHTML += `
-                    <div class="cat-item" onclick="filterProducts('${cat.slug}', '${cat.name}')">
-                        ${cat.name}
-                    </div>`;
-            });
-            categoryMenu.innerHTML = menuHTML;
+        // فحص الاتصال الحقيقي
+        async function checkDB() {
+            const { data, error } = await supabaseClient.from('templates').select('id').limit(1);
+            const status = document.getElementById('db_status');
+            if(error) {
+                status.innerText = "Connection Error"; status.style.color = "red";
+            } else {
+                status.innerText = "Supabase Live ●"; status.style.color = "var(--s-accent)";
+            }
         }
 
-    } catch (err) {
-        console.error("خطأ في تحميل المتجر:", err);
-    }
-}
+        // جلب القوالب من SQL
+        async function fetchTemplates() {
+            const content = document.getElementById('mainContent');
+            content.innerHTML = "جاري جلب البيانات من السيرفر...";
+            
+            let { data: templates, error } = await supabaseClient.from('templates').select('*');
+            
+            if(error) {
+                content.innerHTML = "خطأ: " + error.message;
+            } else {
+                let tableHtml = `<table><thead><tr><th>اسم القالب</th><th>الفئة</th><th>تاريخ النشر</th></tr></thead><tbody>`;
+                templates.forEach(t => {
+                    tableHtml += `<tr><td><b>${t.name}</b></td><td>${t.category}</td><td>${new Date(t.created_at).toLocaleDateString()}</td></tr>`;
+                });
+                tableHtml += `</tbody></table>`;
+                content.innerHTML = tableHtml;
+            }
+        }
 
-// تشغيل النظام عند فتح الصفحة
-window.addEventListener('DOMContentLoaded', initStore);
-</script>
+        // تحكم الشريط الجانبي
+        function toggleSidebar() { document.getElementById('mainSidebar').classList.toggle('collapsed'); }
+        function toggleSubMenu() { document.getElementById('linksContainer').classList.toggle('visible'); }
 
+        // التوقيت الحي
+        setInterval(() => {
+            document.getElementById('liveTime').innerText = new Date().toLocaleTimeString('ar-DZ');
+        }, 1000);
 
+        if(localStorage.getItem('sys_banned')) document.getElementById('gate_box').innerHTML = "<h2 style='color:red'>BANNED</h2>";
+    </script>
 </body>
 </html>
+
